@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>直感５秒診断</title>
+  <link rel="stylesheet" href="firstGame.css">
+</head>
+<body>
+  <h1 id="mainTitle">直感<span class="highlight">5秒</span>診断</h1>
+
+  <div id="game">
+
+    <div id="modeLabelGame">未選択</div>
+
+    <p id="description" class="description">
+    ゲーム説明🎯<br>
+    5秒以内に「YES / NO」で答えるだけ！<br>
+    ※5秒だから、つい本音で選んじゃう<br>
+    👉 テーマを1つ選んでね！<br>
+    日常・仕事・恋愛、どれのタイプが気になる？
+    </p>
+
+    <div id="modeSelect">
+      <button id="dailyBtn">日常編</button>
+      <button id="workBtn">仕事編</button>
+      <button id="loveBtn">恋愛編</button>
+    </div>
+    
+    <p id="startNotice" class="description" style="display:none;">
+      準備OK？😏<br>
+      スタートを押すとすぐ始まるよ！
+    </p>
+
+    <button id="backBtn">⬅戻る</button>
+    <button id="startBtn">診断スタート</button>
+
+    <p id="progress"></p>
+    <p id="question">ここに質問が表示される</p>
+    <p id="timer">3</p>
+
+   <div id="buttonGroup">
+    <button id="btnA">YES</button>
+    <button id="btnB">NO</button>
+   </div>
+  </div>
+
+ <div id="resultCard" class="card">
+
+  <div id="modeLabelResult">未選択</div>
+
+  <div id="result">
+    <span id="resultType"></span><br>
+    <span id="resultComment"></span>
+  </div>
+
+  <div id="tweet-area"></div>
+  <button id="restartBtn">もう一度診断する</button>
+
+</div>
+
+  <script src="firstGame.js"></script>
+</body>
+</html>
