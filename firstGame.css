@@ -1,3 +1,5 @@
+/* 全体 */
+
 body {
   margin: 0;
   height: 100vh;
@@ -7,10 +9,10 @@ body {
   justify-content: flex-start;
   background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
   font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-  transition: background-color 0.8s ease;
   padding-top: 20px;
   overflow: hidden;
   transition: background 1.5s ease-in-out;
+  line-height: 1.7;
 }
 
 #mainTitle {
@@ -41,10 +43,78 @@ body {
   margin-bottom: 10px;
 }
 
+/* 共通 */
+
 .activeMode {
   background: #4a69bd;
   opacity: 1;
 }
+
+button {
+  padding: 12px 30px;
+  margin: 10px;
+  border-radius: 15px; 
+  border: 3px solid #fff; 
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 900;
+  background-color: #576574; 
+  color: white;
+
+  box-shadow: 0 6px 0px #222f3e; 
+  transition: all 0.1s ease;
+  position: relative;
+  
+  letter-spacing: 0.05em;
+}
+
+@media (hover: hover) {
+  button:hover {
+    background-color: #8395a7;
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0px #222f3e;
+  }
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0px #222f3e;
+}
+
+.pressed {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0px #222f3e;
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.description {
+  font-size: 17px;
+  color: #2f3640;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  line-height: 1.8;
+
+  background: #ffffffcc;
+  padding: 15px 20px;
+  border-radius: 15px;
+
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+  animation: fadeIn 0.6s ease;
+}
+
+#startNotice {
+  margin-top: 0;
+}
+
+/*レイアウト*/
 
 #game,
 #resultCard {
@@ -66,6 +136,10 @@ body {
   position: relative;
 }
 
+#game.start-mode {
+  justify-content: center;
+}
+
 #modeLabelGame,
 #modeLabelResult {
   font-size: 18px;
@@ -81,6 +155,17 @@ body {
   left: 50%;
   transform: translateX(-50%);
 }
+
+#resultCard {
+  display: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  min-height: 420px;
+}
+
+/* モード選択 */
 
 #modeSelect {
   display: flex;
@@ -102,73 +187,29 @@ body {
   box-shadow: 0 6px 0 rgba(0,0,0,0.2);
 }
 
-#dailyBtn {
-  background: #2ecc71; /* 緑 */
+#modeSelect button {
   color: white;
 }
 
-#workBtn {
-  background: #273c75; /* 濃い青 */
-  color: white;
-}
+#dailyBtn { background: #2ecc71; }
+#workBtn  { background: #273c75; }
+#loveBtn  { background: #e84118; }
 
-#loveBtn {
-  background: #e84118; /* 赤 */
-  color: white;
+#startBtn {
+  margin-top: 20px;
 }
 
 #backBtn {
   position: absolute;
   bottom: 20px;
   left: 20px;
-
   display: none;
 
-  /* ↓他のボタンと統一 */
   padding: 10px 18px;
   font-size: 16px;
-  font-weight: 900;
-
-  border-radius: 15px;
-  border: 3px solid #fff;
-  background-color: #576574;
-  color: white;
-
-  box-shadow: 0 6px 0px #222f3e;
-  transition: all 0.1s ease;
 }
 
-#backBtn:hover {
-  background-color: #8395a7;
-  transform: translateY(-3px);
-  box-shadow: 0 9px 0px #222f3e;
-}
-
-#backBtn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0px #222f3e;
-}
-
-#startBtn {
-  display: none;
-}
-
-.description {
-  font-size: 17px;
-  color: #2f3640;
-  text-align: center;
-  margin-top: 60px;
-  margin-bottom: 20px;
-  line-height: 1.8;
-
-  background: #ffffffcc;
-  padding: 15px 20px;
-  border-radius: 15px;
-
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-
-  animation: fadeIn 0.6s ease;
-}
+/* ゲーム */
 
 #progress {
   color: #576574;
@@ -181,37 +222,39 @@ body {
   min-height: 24px;
 }
 
-button {
-  padding: 12px 30px;
-  margin: 10px;
-  border-radius: 15px; 
-  border: 3px solid #fff; 
-  cursor: pointer;
-  font-size: 20px;
+#question {
+  font-size: 25px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.6;
+  text-align: center;
+  width: auto;
+  margin: 10px auto;
+  white-space: nowrap;
+  min-height: 90px;
+  transform: translateY(12px);
+}
+
+#timer {
+  width: 56px;
+  height: 56px;
+  margin: 10px auto;
+  padding: 0;
+
+  font-size: 32px;
   font-weight: 900;
-  background-color: #576574; 
-  color: white;
+  color: #273c75;
+  text-align: center;
+  line-height: 56px;
 
-  box-shadow: 0 6px 0px #222f3e; 
-  transition: all 0.1s ease;
-  position: relative;
-  
-  letter-spacing: 0.05em;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-
-button:hover {
-  background-color: #8395a7;
-  transform: translateY(-3px);
-  box-shadow: 0 9px 0px #222f3e;
-}
-
-button:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0px #222f3e;
-}
-
 
 #buttonGroup {
+  padding: 16px 36px;
+  font-size: 22px;
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -225,48 +268,14 @@ button:active {
   font-size: 16px;
 }
 
-#question {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
-  margin: 10px 0;
-  min-height: 60px;
-  line-height: 1.4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#timer {
-  font-size: 32px;
-  font-weight: bold;
-  margin: 5px 0;
-}
-
-#resultCard {
-  display: none;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  min-height: 420px;
-}
-
-.card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
+/* 結果 */
 
 #result {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  background: transparent; 
   padding: 20px 0;
   margin: 20px 0;
-  border-radius: 0;
-  backdrop-filter: none; 
-  box-shadow: none;      
   color: #333;         
 }
 
@@ -280,7 +289,7 @@ button:active {
   padding-bottom: 10px;
   margin-top: 50px;
   margin-bottom: 20px;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 #resultComment {
@@ -289,8 +298,16 @@ button:active {
   color: #1e272e;
   line-height: 1.6;
   max-width: 100%;
-  margin: 0 auto 30px;
+  margin: 0 auto 10px;
   padding: 0 10px;
+  min-height: 3.5em;
+}
+
+#tweet-area {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #tweet-area a,
@@ -305,7 +322,7 @@ button:active {
   padding: 8px 14px;
   border-radius: 10px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 0;
   box-shadow: 0 4px 0 #0d8ddb;
   transition: 0.1s;
   font-size: 13px;
@@ -322,25 +339,95 @@ button:active {
 
 #restartBtn {
   display: block;
-  margin: 20px auto 0;
+  margin: 10px auto 0;
 }
 
+/* 初期表示 */
+#startBtn,
 #question,
-#btnA,
-#btnB,
-#timer {
-  display: none;
-}
-
+#buttonGroup,
+#timer,
 #result,
 #restartBtn {
   display: none;
 }
 
+/* アニメーション */
+
+@keyframes questionFade {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.question-animate {
+  animation: questionFade 0.22s ease;
+}
+
+@keyframes questionHide {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+.question-hide {
+  animation: questionHide 0.14s ease forwards;
+}
+
+.loading-text {
+  width: 100%;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.8;
+  letter-spacing: 0.08em;
+}
+
+.loading {
+  animation: pulseLoading 1s infinite;
+}
+
+
+@keyframes pulseLoading {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+}
+
 @keyframes popUp {
-  0% { opacity:0; transform: translateY(100px) scale(0.3); }
-  70% { transform: translateY(-20px) scale(1.2); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .pop-animation {
@@ -362,6 +449,8 @@ button:active {
   animation: shake 0.4s ease-in-out;
 }
 
+/*スマホ*/
+
 @media (max-width: 500px) {
 
   body {
@@ -382,43 +471,85 @@ button:active {
     padding: 20px;
   }
 
+  #game {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+
+  #modeLabelGame {
+    top: 20px;
+  }
+
+  #modeSelect {
+    transform: none;
+    margin-top: 25px;
+    margin-bottom: 24px;
+  }
+
+  .description {
+    margin-top: 55px;
+    line-height: 2;
+  }
+
   #question {
-    font-size: 20px;
-    min-height: 50px;
+    white-space: normal;
+    font-size: 24px;
+    max-width: 300px;
+    min-height: 80px;
   }
 
   #timer {
-    font-size: 24px;
+    font-size: 32px;
+    font-weight: 900;
   }
 
-  #buttonGroup {
-    flex-direction: row;
-    gap: 8px;
+  #startBtn {
+    font-size: 18px;
+    padding: 16px 28px;
+  }
+
+  #restartBtn {
+    font-size: 16px;
+    padding: 14px 36px;
   }
 
   #buttonGroup button {
-    font-size: 14px;
-    padding: 10px;
+    font-size: 18px;
+    padding: 14px;
   }
 
   button {
+    transition: none;
+    -webkit-tap-highlight-color: transparent;
     font-size: 16px;
     padding: 12px;
   }
 
-  #modeSelect {
-    flex-direction: row;
-    margin-bottom: 0;
-    transform: none;
+  button:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #222f3e;
+  }
+
+  #buttonGroup button:focus {
+    outline: none;
+  }
+
+  .loading-text {
+    font-size: 28px;
   }
 
   #resultType {
-    font-size: clamp(18px, 6vw, 28px);
+    font-size: clamp(24px, 7vw, 34px);
+    margin-top: 50px;
     margin-bottom: 0;
+  }
+
+  .mobile-result {
+    white-space: normal;
+    line-height: 1.5;
   }
 
   #resultComment {
     font-size: 16px;
   }
-
 }

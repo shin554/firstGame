@@ -1,9 +1,6 @@
 'use strict'
-let questions = [];
-let currentMode = "daily";
-
 const questionSets = {
-  daily:[
+  daily: [
     { text: "メニューはすぐ決める", type: 1 },
     { text: "流行りものはすぐ試す", type: 1 },
     { text: "初めての場所でも迷わず進む", type: 1 },
@@ -17,234 +14,385 @@ const questionSets = {
   ],
 
   work: [
-    { text: "締切はギリギリまで動かない", type: 1 },
-    { text: "思いついたらすぐ行動する", type: 1 },
-    { text: "会議では積極的に発言する", type: 1 },
-    { text: "新しいやり方を試すのが好き", type: 1 },
-    { text: "仕事はスピード重視", type: 1 },
-    { text: "締切は余裕を持って終わらせる", type: -1 },
-    { text: "ミスしないよう何度も確認する", type: -1 },
-    { text: "計画を立ててから動く", type: -1 },
-    { text: "安定したやり方を選ぶ", type: -1 },
-    { text: "指示やルールをしっかり守る", type: -1 },
-  ],
+  { text: "やりながら考える方がしっくりくる", type: 1 },
+  { text: "思いついた方法はまず試してみたくなる", type: 1 },
+  { text: "人と話すときは自分の意見を言う方だ", type: 1 },
+  { text: "新しいやり方を見ると気になってしまう", type: 1 },
+  { text: "できるだけ早く終わる方法を考えるのが好き", type: 1 },
+
+  { text: "始める前に手順を細かく考えることが多い", type: -1 },
+  { text: "ミスがないか何度か見直すことが多い", type: -1 },
+  { text: "慣れたやり方のほうが安心できる", type: -1 },
+  { text: "決まったやり方があると動きやすい", type: -1 },
+  { text: "安定したやり方を続ける方が好きだ", type: -1 },
+],
 
   love: [
-    { text: "好きになったらすぐアプローチする", type: 1 },
-    { text: "気になる人には自分から話しかける", type: 1 },
-    { text: "ノリでデートに誘える", type: 1 },
-    { text: "直感で相手を好きになることが多い", type: 1 },
-    { text: "恋愛は勢いが大事だと思う", type: 1 },
-    { text: "相手の気持ちをじっくり考える", type: -1 },
-    { text: "告白のタイミングを慎重に考える", type: -1 },
-    { text: "相手の反応を見ながら距離を縮める", type: -1 },
-    { text: "失敗しないように行動する", type: -1 },
-    { text: "長く続く関係を重視する", type: -1 },
-  ]
+  { text: "気になる人には自分から話しかける方だ", type: 1 },
+  { text: "好意はわりとすぐ態度に出やすい", type: 1 },
+  { text: "相手と一気に距離が縮まることがある", type: 1 },
+  { text: "気持ちはわりと直感で決めることが多い", type: 1 },
+  { text: "思い切って行動する方だと思う", type: 1 },
+
+  { text: "相手の気持ちを見てから動くことが多い", type: -1 },
+  { text: "関係は少しずつ距離を縮めたいタイプだ", type: -1 },
+  { text: "行動する前にタイミングを考える", type: -1 },
+  { text: "失敗しないように慎重に進めることが多い", type: -1 },
+  { text: "長く続く関係を大事にしたいと思う", type: -1 },
+],
 };
 
+const modeSettings = {
+  daily: {
+    label: "日常編",
+    color: "#00a86b",
+    background: "linear-gradient(135deg, #85FFDE 0%, #FFFB7D 100%)"
+  },
+  work: {
+    label: "仕事編",
+    color: "#3b82f6",
+    background: "linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%)"
+  },
+  love: {
+    label: "恋愛編",
+    color: "#ef4444",
+    background: "linear-gradient(135deg, #FF9A8B 0%, #FFD1FF 100%)"
+  }
+};
+
+const dom = {
+  game: document.getElementById("game"),
+  question: document.getElementById("question"),
+
+  btnA: document.getElementById("btnA"),
+  btnB: document.getElementById("btnB"),
+
+  startBtn: document.getElementById("startBtn"),
+  backBtn: document.getElementById("backBtn"),
+  restartBtn: document.getElementById("restartBtn"),
+
+  resultCard: document.getElementById("resultCard"),
+  result: document.getElementById("result"),
+  resultType: document.getElementById("resultType"),
+  resultComment: document.getElementById("resultComment"),
+
+  timer: document.getElementById("timer"),
+  progress: document.getElementById("progress"),
+
+  tweetArea: document.getElementById("tweet-area"),
+
+  modeLabelGame: document.getElementById("modeLabelGame"),
+  modeLabelResult: document.getElementById("modeLabelResult"),
+
+  description: document.getElementById("description"),
+  startNotice: document.getElementById("startNotice"),
+  modeSelect: document.getElementById("modeSelect"),
+  modeButtons: document.querySelectorAll("#modeSelect button"),
+  buttonGroup: document.getElementById("buttonGroup"),
+  mainTitle: document.getElementById("mainTitle"),
+
+  dailyBtn: document.getElementById("dailyBtn"),
+  workBtn: document.getElementById("workBtn"),
+  loveBtn: document.getElementById("loveBtn")
+};
+
+let questions = [];
+let currentMode = "daily";
 let score = 0;
 let currentQuestion = 0;
 let timeLeft = 5;
 let timer;
 
-const description = document.getElementById("description");
-const questionElement = document.getElementById("question");
-const btnA = document.getElementById("btnA");
-const btnB = document.getElementById("btnB");
-const backBtn = document.getElementById("backBtn");
-const startBtn = document.getElementById("startBtn");
-const restartBtn = document.getElementById("restartBtn");
-const resultCard = document.getElementById("resultCard");
-const resultElement = document.getElementById("result");
-const resultTypeElement = document.getElementById("resultType");
-const resultCommentElement = document.getElementById("resultComment");
-const timerElement = document.getElementById("timer");
-const progressElement = document.getElementById("progress");
-const tweetArea = document.getElementById("tweet-area");
+let gameState = "select";
+// select = 最初の画面
+// ready = スタート待ち
+// game = プレイ中
+// loading = 結果待ち
+// result = 結果画面
+
+function renderUI() {
+  dom.game.style.display = "none";
+  dom.resultCard.style.display = "none";
+  dom.modeSelect.style.display = "none";
+  dom.description.style.display = "none";
+
+  dom.question.style.display = "none";
+  dom.buttonGroup.style.display = "none";
+  dom.timer.style.display = "none";
+  dom.restartBtn.style.display = "none";
+  dom.startBtn.style.display = "none";
+  dom.backBtn.style.display = "none";
+  dom.startNotice.style.display = "none";
+  dom.progress.style.display = "none";
+
+  if (gameState === "select") {
+    dom.game.style.display = "flex";
+    dom.modeSelect.style.display = "flex";
+    dom.description.style.display = "block";
+  }
+
+  if (gameState === "ready") {
+    dom.game.style.display = "flex";
+    dom.startBtn.style.display = "block";
+    dom.backBtn.style.display = "block";
+    dom.startNotice.style.display = "block";
+  }
+
+  if (gameState === "game") {
+    dom.game.style.display = "flex";
+    dom.progress.style.display = "block"
+    dom.question.style.display = "flex";
+    dom.timer.style.display = "block";
+    dom.buttonGroup.style.display = "flex";
+  }
+
+  if (gameState === "loading") {
+    dom.game.style.display = "flex";
+    dom.question.style.display = "flex";
+
+    dom.question.textContent = "診断終了！解析中...";
+    dom.question.classList.add("loading");
+  }
+
+  if (gameState === "result") {
+    dom.resultCard.style.display = "block";
+    dom.restartBtn.style.display = "block";
+  }
+}
 
 function updateModeLabel(text, color) {
-  const labelGame = document.getElementById("modeLabelGame");
-  const labelResult = document.getElementById("modeLabelResult");
+  dom.modeLabelGame.textContent = text;
+  dom.modeLabelGame.style.color = color;
 
-  labelGame.textContent = text;
-  labelGame.style.color = color;
+  dom.modeLabelResult.textContent = text;
+  dom.modeLabelResult.style.color = color;
+}
 
-  labelResult.textContent = text;
-  labelResult.style.color = color;
+function shuffleQuestions() {
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+}
+
+function createTweetButton(text) {
+  dom.tweetArea.innerText = "";
+  const anchor = document.createElement("a");
+  const hrefValue = "https://x.com/intent/tweet?text=" + encodeURIComponent(text + "\n#直感5秒診断");
+
+  anchor.setAttribute('href', hrefValue);
+  anchor.setAttribute('target', '_blank');
+  anchor.className = "custom-tweet-button";
+  anchor.innerText = "診断結果をポストする";
+  dom.tweetArea.appendChild(anchor);
 }
 
 function setMode(mode) {
   currentMode = mode;
   questions = questionSets[mode];
 
-  document.querySelectorAll("#modeSelect button").forEach(btn => {
+  const settings = modeSettings[mode];
+
+  dom.modeButtons.forEach(btn => {
     btn.classList.remove("activeMode");
   });
 
-  document.getElementById(mode + "Btn").classList.add("activeMode");
+  updateModeLabel(settings.label, settings.color);
+  document.body.style.background = settings.background;
+  dom[mode + "Btn"].classList.add("activeMode");
 
-  if (mode === "daily") {
-    updateModeLabel("日常編", "#00a86b");
-  } else if (mode === "work") {
-    updateModeLabel("仕事編", "#3b82f6");
-  } else {
-    updateModeLabel("恋愛編", "#ef4444");
-  }
-
-  description.style.display = "none";
-  document.getElementById("startNotice").style.display = "block"; 
-  document.getElementById("modeSelect").style.display = "none";
-  backBtn.style.display = "block";
-  startBtn.style.display = "block";
-
-  if (mode === "daily") {
-    document.body.style.background = "linear-gradient(135deg, #85FFDE 0%, #FFFB7D 100%)";
-  } else if (mode === "work") {
-    document.body.style.background = "linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%)";
-  } else if (mode === "love") {
-    document.body.style.background = "linear-gradient(135deg, #FF9A8B 0%, #FFD1FF 100%)";
-
-}
+  gameState = "ready";
+  renderUI();
 }
 
-function shuffleQuestions() {
- for (let i = questions.length - 1; i > 0; i--) {
-  const j = Math.floor(Math.random() * (i + 1));
-  [questions[i], questions[j]] = [questions[j], questions[i]];
- }
+function startGame() {
+
+  gameState = "game";
+  renderUI();
+
+  shuffleQuestions();
+
+  score = 0;
+  currentQuestion = 0;
+
+  dom.question.classList.remove("question-animate");
+  void dom.question.offsetWidth;
+
+  dom.question.textContent = questions[currentQuestion].text;
+  dom.question.classList.add("question-animate");
+
+  dom.progress.textContent =
+    `${currentQuestion + 1}問目 / 全${questions.length}問`;
+
+  startTimer();
 }
 
 function startTimer() {
   clearInterval(timer);
   timeLeft = 5;
-  timerElement.textContent = timeLeft;
+  dom.timer.textContent = timeLeft;
 
-  timer = setInterval(function () {
+  timer = setInterval(() => {
     timeLeft--;
-    timerElement.textContent = timeLeft;
+    dom.timer.textContent = timeLeft;
 
     if (timeLeft === 0) {
       clearInterval(timer);
-      const gameBoard = document.getElementById("game");
-      gameBoard.classList.add("shake-animation");
+      dom.game.classList.add("shake-animation");
 
       setTimeout(() => {
-        gameBoard.classList.remove("shake-animation");
+        dom.game.classList.remove("shake-animation");
         showNextQuestion();
       }, 400);
     }
-  }, 1000)
+  }, 1000);
 }
 
-function createTweetButton(text) {
-  tweetArea.innerText = "";
-  const anchor = document.createElement("a");
-  const hrefValue = "https://x.com/intent/tweet?text=" + encodeURIComponent(text + "\n#直感5秒診断");
-  
-  anchor.setAttribute('href', hrefValue);
-  anchor.setAttribute('target', '_blank');
-  anchor.className = "custom-tweet-button";
-  anchor.innerText = "診断結果をポストする";
-  tweetArea.appendChild(anchor);
+function getResult() {
+  let resultType = "";
+  let comment = "";
+
+  if (currentMode === "daily") {
+  if (score > 0) {
+    resultType = "ノリ行動タイプ";
+    comment = "思いついたらすぐ動く！フットワーク軽めなタイプ✨";
+  } else if (score < 0) {
+    resultType = "準備しっかりタイプ";
+    comment = "確認や計画を大事にして安心して進めるタイプ🧠";
+  } else {
+    resultType = "マイペースタイプ";
+    comment = "自分のペースで自然体に過ごすのが得意なタイプ🌿";
+  }
+}
+
+if (currentMode === "work") {
+  if (score > 0) {
+    resultType = "即断即決タイプ";
+    comment = "スピード感を大事にして、まず動いて結果を出すタイプ💼";
+  } else if (score < 0) {
+    resultType = "安定重視タイプ";
+    comment = "ミスを防ぎながら、確実に積み上げていく堅実タイプ📊";
+  } else {
+    resultType = "戦略バランスタイプ";
+    comment = "状況を見ながら最適なやり方を選べる柔軟タイプ🧩";
+  }
+}
+
+if (currentMode === "love") {
+  if (score > 0) {
+    resultType = "スピード好意タイプ";
+    comment = "気になると気持ちが先に動きやすく、関係が一気に進むこともあるタイプ❤️";
+  } else if (score < 0) {
+    resultType = "じっくり距離タイプ";
+    comment = "相手との距離やタイミングを大事にしながら関係を育てていくタイプ🌱";
+  } else {
+    resultType = "バランス関係タイプ";
+    comment = "近づきすぎず離れすぎず、ちょうどいい距離感を作るのが上手なタイプ💫";
+  }
+}
+
+  return {
+    resultType,
+    comment
+  };
 }
 
 function showNextQuestion() {
   clearInterval(timer);
-   currentQuestion++;
+  currentQuestion++;
 
   if (currentQuestion < questions.length) {
-    progressElement.textContent = `${currentQuestion + 1}問目 / 全${questions.length}問`;
-    questionElement.textContent = questions[currentQuestion].text;
-    startTimer();
-  } else {
-    progressElement.textContent = "";
-    questionElement.textContent = "診断終了！解析中...";
-    document.getElementById("buttonGroup").style.display = "none";
-    timerElement.style.display = "none";
+    dom.progress.textContent =
+      `${currentQuestion + 1}問目 / 全${questions.length}問`;
 
-    setTimeout(function () {
-      document.getElementById("mainTitle").classList.add("title-small");
-      document.getElementById("game").style.display = "none";
-      resultCard.style.display = "block";
-      restartBtn.style.display = "block";
+    dom.question.classList.remove("question-animate");
+    dom.question.classList.add("question-hide");
+
+    setTimeout(() => {
+      dom.question.classList.remove("question-hide");
+
+      void dom.question.offsetWidth;
+
+      dom.question.textContent = questions[currentQuestion].text;
+      dom.question.classList.add("question-animate");
 
       setTimeout(() => {
-        resultElement.classList.add("pop-animation");
-      }, 10);
+        startTimer();
+      }, 220);
 
-      let resultType = "";
-      let comment = "";
+    }, 180);
 
-      if (currentMode === "daily") {
-        if (score > 0) {
-          resultType = "ノリ行動タイプ";
-          comment = "思いついたらすぐ動く！フットワーク軽めなタイプ✨";
-        } else if (score < 0) {
-          resultType = "しっかり準備タイプ";
-          comment = "確認と計画を大事にする安心感あるタイプ🧠";
-        } else {
-          resultType = "マイペースタイプ";
-          comment = "自分のペースで自然体に過ごせるタイプ🌿";
-        }
+  } else {
+    gameState = "loading";
+    renderUI();
 
+    setTimeout(() => {
+      dom.question.classList.remove("loading");
+      dom.mainTitle.classList.add("title-small");
 
-      } else if (currentMode === "work") {
+      const resultData = getResult();
 
-        if (score > 0) {
-          resultType = "即断即決タイプ";
-          comment = "スピードで結果を出す仕事人💼";
-        } else if (score < 0) {
-          resultType = "慎重派タイプ";
-          comment = "ミスなく確実に進める堅実タイプ📊";
-        } else {
-          resultType = "戦略バランスタイプ";
-          comment = "状況を見て最適解を選べる有能タイプ🧩";
-        }
-
-      } else if (currentMode === "love") {
-
-        if (score > 0) {
-          resultType = "直感アタック型";
-          comment = "好きになったら一直線の情熱タイプ❤️";
-        } else if (score < 0) {
-          resultType = "慎重タイプ";
-          comment = "ゆっくり距離を縮める誠実タイプ🌱";
-        } else {
-          resultType = "空気読みタイプ";
-          comment = "相手との距離感を大切にできる恋愛上手💫";
-        }
-
+      if (window.innerWidth <= 500) {
+        dom.resultType.classList.add("mobile-result");
+        dom.resultType.innerHTML = `あなたは<br>「${resultData.resultType}」`;
+      } else {
+        dom.resultType.classList.remove("mobile-result");
+        dom.resultType.textContent = `あなたは「${resultData.resultType}」`;
       }
 
-      resultTypeElement.textContent = `あなたは「${resultType}」！`;
-      resultCommentElement.textContent = comment;
+      dom.resultComment.textContent = resultData.comment;
 
-      const tweetText = `あなたは「${resultType}」！\n${comment}`;
+      const tweetText =
+        `あなたは「${resultData.resultType}」！\n${resultData.comment}`;
       createTweetButton(tweetText);
+
+      gameState = "result";
+      renderUI();
+
+      setTimeout(() => {
+        dom.result.classList.add("pop-animation");
+      }, 30);
 
     }, 2000);
 
-  btnA.disabled = true;
-  btnB.disabled = true;
-
+    dom.btnA.disabled = true;
+    dom.btnB.disabled = true;
   }
 }
 
-document.getElementById("dailyBtn").onclick = () => setMode("daily");
-document.getElementById("workBtn").onclick = () => setMode("work");
-document.getElementById("loveBtn").onclick = () => setMode("love");
+function resetGame() {
+  gameState = "select";
+  renderUI();
+  dom.modeButtons.forEach(btn => {
+    btn.classList.remove("activeMode");
+  });
 
-backBtn.addEventListener("click", function () {
-  
-  document.getElementById("modeSelect").style.display = "flex";
-  description.style.display = "block";
-  document.getElementById("startNotice").style.display = "none";
+  dom.btnA.disabled = false;
+  dom.btnB.disabled = false;
 
-  startBtn.style.display = "none";
-  backBtn.style.display = "none";
+  dom.tweetArea.innerText = "";
+  dom.mainTitle.classList.remove("title-small");
+  dom.result.classList.remove("pop-animation");
+  dom.resultType.classList.remove("mobile-result");
 
-  document.querySelectorAll("#modeSelect button").forEach(btn => {
+  score = 0;
+  currentQuestion = 0;
+
+  updateModeLabel("未選択", "#333");
+
+  document.body.style.background =
+    "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
+}
+
+dom.dailyBtn.onclick = () => setMode("daily");
+dom.workBtn.onclick = () => setMode("work");
+dom.loveBtn.onclick = () => setMode("love");
+
+dom.backBtn.addEventListener("click", function () {
+  gameState = "select";
+  renderUI();
+
+  dom.modeButtons.forEach(btn => {
     btn.classList.remove("activeMode");
   });
 
@@ -253,68 +401,28 @@ backBtn.addEventListener("click", function () {
   document.body.style.background = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
 });
 
-startBtn.addEventListener("click", function () {
-  questions = questionSets[currentMode];
-  document.getElementById("modeSelect").style.display = "none"; 
-  description.style.display = "none";
-  document.getElementById("startNotice").style.display = "none";
-  shuffleQuestions();
-  questionElement.style.display = "block";
-  document.getElementById("buttonGroup").style.display = "flex";
-  btnA.style.display = "inline-block";
-  btnB.style.display = "inline-block";
-  timerElement.style.display = "block";
+dom.startBtn.addEventListener("click", startGame);
 
-  score = 0;
-  currentQuestion = 0;
-
-  btnA.disabled = false;
-  btnB.disabled = false;
-
-  questionElement.textContent = questions[currentQuestion].text;
-  progressElement.textContent = `${currentQuestion + 1}問目 / 全${questions.length}問`;
-
-  startTimer();
-
-  backBtn.style.display = "none";
-  startBtn.style.display = "none";
-});
-
-btnA.addEventListener("click", function () {
+dom.btnA.addEventListener("click", function () {
   score += questions[currentQuestion].type;
   showNextQuestion();
 });
 
-btnB.addEventListener("click", function () {
+dom.btnB.addEventListener("click", function () {
   score -= questions[currentQuestion].type;
   showNextQuestion();
 });
 
-restartBtn.addEventListener("click", function () {
-  document.getElementById("modeSelect").style.display = "flex";
-   description.style.display = "block"; 
-  document.getElementById("startNotice").style.display = "none";
-   document.querySelectorAll("#modeSelect button").forEach(btn => {
-    btn.classList.remove("activeMode");
+dom.restartBtn.addEventListener("click", resetGame);
+
+document.querySelectorAll("button").forEach(button => {
+  button.addEventListener("touchstart", () => {
+    button.classList.add("pressed");
   });
 
-  tweetArea.innerText="";
-  document.getElementById("mainTitle").classList.remove("title-small")
+  button.addEventListener("touchend", () => {
+    button.classList.remove("pressed");
+  });
+});
 
-  resultElement.classList.remove("pop-animation");
-  shuffleQuestions();
-  score = 0;
-  currentQuestion = 0;
-
-  document.getElementById("game").style.display = "flex";
-
-  resultCard.style.display = "none";
-  restartBtn.style.display = "none";
-
-  questionElement.style.display = "none";
-  btnA.style.display = "none";
-  btnB.style.display = "none";
-  timerElement.style.display = "none";
-  updateModeLabel("未選択", "#333");
-  document.body.style.background = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
-}); 
+renderUI();
